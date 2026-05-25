@@ -2,7 +2,7 @@
   "crons": [
     {
       "path": "/api/sms/cron",
-      "schedule": "*/30 * * * *"
+      "schedule": "0 20 * * *"
     },
     {
       "path": "/api/trial/reminder",
