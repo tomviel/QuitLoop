@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { createClient } from '@/lib/supabase/server';
+import { createClient, createAdminClient } from '@/lib/supabase/server';
 import type { PlanId, BillingCycle, AddictionType } from '@/types';
 
 interface OnboardingPayload {
@@ -102,10 +102,13 @@ export async function POST(req: Request) {
   }
 
   // 5. Create subscription with 7-day trial
+  // Uses admin (service role) client to bypass RLS — subscriptions table has no INSERT policy
+  // intentionally, since Stripe webhook owns all updates post-onboarding.
+  const adminSupabase = await createAdminClient();
   const trialEnd = new Date();
   trialEnd.setDate(trialEnd.getDate() + 7);
 
-  const { error: subError } = await supabase.from('subscriptions').upsert(
+  const { error: subError } = await adminSupabase.from('subscriptions').upsert(
     {
       user_id: user.id,
       plan,
