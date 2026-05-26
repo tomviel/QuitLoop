@@ -109,23 +109,36 @@ export async function POST(req: Request) {
     }
   }
 
-  // 5. Create subscription with 7-day trial
+  // 5. Create or update subscription with 7-day trial.
   // Uses admin (service role) client to bypass RLS — subscriptions table has no INSERT policy
-  // intentionally, since Stripe webhook owns all updates post-onboarding.
+  // intentionally, since Stripe webhook owns all post-onboarding updates.
+  // Explicit SELECT → INSERT/UPDATE avoids relying on onConflict, which requires a UNIQUE
+  // CONSTRAINT (not just a unique index) in PostgREST.
   const adminSupabase = await createAdminClient();
   const trialEnd = new Date();
   trialEnd.setDate(trialEnd.getDate() + 7);
 
-  const { error: subError } = await adminSupabase.from('subscriptions').upsert(
-    {
-      user_id: user.id,
-      plan,
-      billing_cycle: billingCycle,
-      status: 'trialing',
-      trial_ends_at: trialEnd.toISOString(),
-    },
-    { onConflict: 'user_id' }
-  );
+  const subscriptionPayload = {
+    plan,
+    billing_cycle: billingCycle,
+    status: 'trialing' as const,
+    trial_ends_at: trialEnd.toISOString(),
+  };
+
+  const { data: existingSub } = await adminSupabase
+    .from('subscriptions')
+    .select('id')
+    .eq('user_id', user.id)
+    .maybeSingle();
+
+  const { error: subError } = existingSub
+    ? await adminSupabase
+        .from('subscriptions')
+        .update(subscriptionPayload)
+        .eq('user_id', user.id)
+    : await adminSupabase
+        .from('subscriptions')
+        .insert({ user_id: user.id, ...subscriptionPayload });
 
   if (subError) {
     console.error('[onboarding] subscription error:', subError);
