@@ -20,7 +20,7 @@ export async function POST() {
     );
   }
 
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000';
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'https://getquitloop.com';
 
   const session = await getStripe().billingPortal.sessions.create({
     customer: subscription.stripe_customer_id,

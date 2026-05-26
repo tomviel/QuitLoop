@@ -56,7 +56,7 @@ export async function GET(req: Request) {
 async function sendTrialEndingEmail(email: string) {
   if (!process.env.RESEND_API_KEY) return;
 
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'https://quitloop.app';
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'https://getquitloop.com';
 
   await fetch('https://api.resend.com/emails', {
     method: 'POST',

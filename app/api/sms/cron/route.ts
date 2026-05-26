@@ -20,7 +20,7 @@ export async function GET(req: Request) {
     process.env.SUPABASE_SERVICE_ROLE_KEY!
   );
 
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'https://quitloop.app';
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'https://getquitloop.com';
   const dashboardUrl = `${appUrl}/dashboard`;
 
   // Fetch all active SMS schedules joined with user phone

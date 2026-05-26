@@ -20,7 +20,7 @@ export default function PrivacyPage() {
             <h2 className="text-lg font-semibold text-text-primary mb-3">1. Who we are</h2>
             <p>
               QuitLoop (&ldquo;we&rdquo;, &ldquo;our&rdquo;, &ldquo;us&rdquo;) operates the QuitLoop mobile web application
-              at quitloop.app. We help individuals break addiction habits through real-time
+              at getquitloop.com. We help individuals break addiction habits through real-time
               AI-assisted interventions.
             </p>
           </section>

@@ -24,7 +24,7 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: 'Invalid plan' }, { status: 400 });
   }
 
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000';
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'https://getquitloop.com';
 
   // Get or create Stripe customer
   const { data: subscription } = await supabase
