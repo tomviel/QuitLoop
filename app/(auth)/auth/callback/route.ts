@@ -13,6 +13,12 @@ export async function GET(request: NextRequest) {
   }
 
   const cookieStore = await cookies();
+
+  // Collect cookies set during the exchange so we can attach them to the
+  // redirect response. NextResponse.redirect() creates a new Response object,
+  // so cookies written via cookieStore.set() are NOT carried over automatically.
+  const pendingCookies: Array<{ name: string; value: string; options: Record<string, unknown> }> = [];
+
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
@@ -22,9 +28,8 @@ export async function GET(request: NextRequest) {
           return cookieStore.getAll();
         },
         setAll(cookiesToSet) {
-          cookiesToSet.forEach(({ name, value, options }) => {
-            cookieStore.set(name, value, options);
-          });
+          // Stage cookies — applied to the redirect response below
+          cookiesToSet.forEach((c) => pendingCookies.push(c));
         },
       },
     }
@@ -33,7 +38,7 @@ export async function GET(request: NextRequest) {
   const { error } = await supabase.auth.exchangeCodeForSession(code);
 
   if (error) {
-    console.error('[auth/callback] Exchange error:', error.message);
+    console.error('[auth/callback] exchange error:', error.message);
     return NextResponse.redirect(`${origin}/login?error=exchange_failed`);
   }
 
@@ -45,19 +50,21 @@ export async function GET(request: NextRequest) {
     return NextResponse.redirect(`${origin}/login?error=no_user`);
   }
 
-  // Check if user has already completed onboarding (has a subscription)
+  // Returning user (has subscription) → dashboard; new user → onboarding
   const { data: subscription } = await supabase
     .from('subscriptions')
     .select('id')
     .eq('user_id', user.id)
     .single();
 
-  if (subscription) {
-    // Returning user → go to dashboard
-    const destination = next ?? '/dashboard';
-    return NextResponse.redirect(`${origin}${destination}`);
-  }
+  const destination = subscription ? (next ?? '/dashboard') : '/onboarding';
+  const response = NextResponse.redirect(`${origin}${destination}`);
 
-  // New user → go to onboarding
-  return NextResponse.redirect(`${origin}/onboarding`);
+  // Attach session cookies to THIS response so the browser carries the
+  // session when it follows the redirect
+  pendingCookies.forEach(({ name, value, options }) => {
+    response.cookies.set(name, value, options as Parameters<typeof response.cookies.set>[2]);
+  });
+
+  return response;
 }
