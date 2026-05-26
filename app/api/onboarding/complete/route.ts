@@ -34,15 +34,19 @@ export async function POST(req: Request) {
 
   const { plan, billingCycle, modules, triggers, phone, cravingStart, cravingEnd, smsOptIn, timezone } = body;
 
-  // Basic validation
-  if (!plan || !modules?.length || !triggers?.length || !phone?.trim()) {
+  // Basic validation — phone only required when user opted into SMS
+  if (!plan || !modules?.length || !triggers?.length || (smsOptIn && !phone?.trim())) {
     return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
   }
 
   // 1. Update user profile (phone + timezone)
+  // Only persist phone if one was provided — don't overwrite with empty string
+  const profileUpdate: { timezone: string; phone?: string } = { timezone };
+  if (phone?.trim()) profileUpdate.phone = phone.trim();
+
   const { error: userError } = await supabase
     .from('users')
-    .update({ phone: phone.trim(), timezone })
+    .update(profileUpdate)
     .eq('id', user.id);
 
   if (userError) {

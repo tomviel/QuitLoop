@@ -90,11 +90,8 @@ export default function OnboardingPage() {
     if (step === 2) return state.modules.length > 0;
     if (step === 3) return state.triggers.length > 0;
     if (step === 4) {
-      return (
-        state.phone.trim().length >= 7 &&
-        state.cravingStart !== '' &&
-        state.cravingEnd !== ''
-      );
+      const phoneOk = !state.smsOptIn || state.phone.trim().length >= 7;
+      return phoneOk && state.cravingStart !== '' && state.cravingEnd !== '';
     }
     return true;
   }
