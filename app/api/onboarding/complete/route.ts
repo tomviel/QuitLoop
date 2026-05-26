@@ -39,18 +39,22 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
   }
 
-  // 1. Update user profile (phone + timezone)
-  // Only persist phone if one was provided — don't overwrite with empty string
-  const profileUpdate: { timezone: string; phone?: string } = { timezone };
-  if (phone?.trim()) profileUpdate.phone = phone.trim();
+  // 1. Upsert user profile — insert if the row doesn't exist yet (e.g. the
+  //    handle_new_user trigger hadn't fired), otherwise update in place.
+  //    This guarantees the FK constraint on modules.user_id is satisfied.
+  const profileUpsert: { id: string; email: string; timezone: string; phone?: string } = {
+    id: user.id,
+    email: user.email!,
+    timezone,
+  };
+  if (phone?.trim()) profileUpsert.phone = phone.trim();
 
   const { error: userError } = await supabase
     .from('users')
-    .update(profileUpdate)
-    .eq('id', user.id);
+    .upsert(profileUpsert, { onConflict: 'id' });
 
   if (userError) {
-    console.error('[onboarding] user update error:', userError);
+    console.error('[onboarding] user upsert error:', userError);
     return NextResponse.json({ error: 'Failed to save profile' }, { status: 500 });
   }
 

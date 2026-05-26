@@ -33,7 +33,7 @@ const DEFAULT_STATE: OnboardingState = {
   phone: '',
   cravingStart: '20:00',
   cravingEnd: '22:00',
-  smsOptIn: true,
+  smsOptIn: false,
   timezone: getTimezone(),
 };
 
@@ -392,7 +392,11 @@ function Step4Contact({
           value={phone}
           onChange={(e) => onPhoneChange(e.target.value)}
           autoComplete="tel"
-          hint="International format. Used only for craving alerts."
+          hint={
+            smsOptIn && phone.trim().length > 0 && phone.trim().length < 7
+              ? 'Enter a valid international number (e.g. +33 6 12 34 56 78)'
+              : 'International format. Used only for craving alerts.'
+          }
         />
 
         <div>
