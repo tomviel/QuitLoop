@@ -1,0 +1,24 @@
+<svg width="500" height="500" viewBox="0 0 500 500" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="ring-grad" x1="0.2" y1="0" x2="0.8" y2="1">
+      <stop offset="0%"   stop-color="#FFFFFF"/>
+      <stop offset="40%"  stop-color="#CCCCCC"/>
+      <stop offset="100%" stop-color="#666666"/>
+    </linearGradient>
+    <linearGradient id="tail-grad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%"   stop-color="#CCCCCC"/>
+      <stop offset="100%" stop-color="#444444"/>
+    </linearGradient>
+    <linearGradient id="dot-grad" x1="0.2" y1="0" x2="0.8" y2="1">
+      <stop offset="0%"   stop-color="#FFFFFF"/>
+      <stop offset="100%" stop-color="#888888"/>
+    </linearGradient>
+  </defs>
+  <rect width="500" height="500" fill="#0A0A0A" rx="100"/>
+  <circle cx="232" cy="225" r="108" fill="none"
+    stroke="url(#ring-grad)" stroke-width="38"/>
+  <line x1="308" y1="304" x2="406" y2="406"
+    stroke="url(#tail-grad)" stroke-width="38" stroke-linecap="round"/>
+  <circle cx="232" cy="225" r="22" fill="url(#dot-grad)"/>
+  <circle cx="226" cy="219" r="7" fill="white" opacity="0.4"/>
+</svg>

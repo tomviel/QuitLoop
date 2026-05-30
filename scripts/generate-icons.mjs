@@ -1,4 +1,4 @@
-// Generates all required PWA icon sizes using sharp + SVG
+// Generates all required PWA icon sizes from the QuitLoop logo SVG using sharp.
 import sharp from 'sharp';
 import { writeFileSync } from 'fs';
 import { join } from 'path';
@@ -10,53 +10,64 @@ const iconsDir = join(__dirname, '..', 'public', 'icons');
 
 const sizes = [72, 96, 128, 144, 152, 192, 384, 512];
 
-function generateSVG(size) {
-  const padding = Math.round(size * 0.12);
-  const circleR = Math.round((size / 2) - padding);
-  const cx = size / 2;
-  const cy = size / 2;
-  const fontSize = Math.round(size * 0.28);
-
-  return `<svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" xmlns="http://www.w3.org/2000/svg">
-  <rect width="${size}" height="${size}" fill="#0A0A0A"/>
-  <circle cx="${cx}" cy="${cy}" r="${circleR}" fill="#C0392B"/>
-  <text
-    x="${cx}"
-    y="${cy}"
-    font-family="Arial, sans-serif"
-    font-weight="700"
-    font-size="${fontSize}"
-    fill="white"
-    text-anchor="middle"
-    dominant-baseline="central"
-    letter-spacing="-1"
-  >QL</text>
+// ── Source logo SVG (viewBox 0 0 500 500, scaled by sharp at render time) ────
+function getLogoSVG(size) {
+  return `<svg width="${size}" height="${size}" viewBox="0 0 500 500" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="ring-grad" x1="0.2" y1="0" x2="0.8" y2="1">
+      <stop offset="0%"   stop-color="#FFFFFF"/>
+      <stop offset="40%"  stop-color="#CCCCCC"/>
+      <stop offset="100%" stop-color="#666666"/>
+    </linearGradient>
+    <linearGradient id="tail-grad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%"   stop-color="#CCCCCC"/>
+      <stop offset="100%" stop-color="#444444"/>
+    </linearGradient>
+    <linearGradient id="dot-grad" x1="0.2" y1="0" x2="0.8" y2="1">
+      <stop offset="0%"   stop-color="#FFFFFF"/>
+      <stop offset="100%" stop-color="#888888"/>
+    </linearGradient>
+  </defs>
+  <rect width="500" height="500" fill="#0A0A0A" rx="100"/>
+  <circle cx="232" cy="225" r="108" fill="none"
+    stroke="url(#ring-grad)" stroke-width="38"/>
+  <line x1="308" y1="304" x2="406" y2="406"
+    stroke="url(#tail-grad)" stroke-width="38" stroke-linecap="round"/>
+  <circle cx="232" cy="225" r="22" fill="url(#dot-grad)"/>
+  <circle cx="226" cy="219" r="7" fill="white" opacity="0.4"/>
 </svg>`;
 }
 
 async function main() {
+  // PWA icons — all sizes
   for (const size of sizes) {
-    const svg = generateSVG(size);
-    const svgBuffer = Buffer.from(svg);
     const outputPath = join(iconsDir, `icon-${size}x${size}.png`);
-    await sharp(svgBuffer).png().toFile(outputPath);
-    console.log(`Generated ${outputPath}`);
+    await sharp(Buffer.from(getLogoSVG(size))).resize(size, size).png().toFile(outputPath);
+    console.log(`✓ icon-${size}x${size}.png`);
   }
 
-  // Apple touch icon (180x180)
-  const appleIconSvg = generateSVG(180);
-  await sharp(Buffer.from(appleIconSvg)).png().toFile(join(iconsDir, 'apple-touch-icon.png'));
-  console.log('Generated apple-touch-icon.png');
+  // Apple touch icon (180×180)
+  await sharp(Buffer.from(getLogoSVG(180)))
+    .resize(180, 180)
+    .png()
+    .toFile(join(iconsDir, 'apple-touch-icon.png'));
+  console.log('✓ apple-touch-icon.png');
 
-  // Favicon 32x32
-  const faviconSvg = generateSVG(32);
-  await sharp(Buffer.from(faviconSvg)).png().toFile(join(iconsDir, 'favicon-32x32.png'));
+  // Favicon PNGs (16 and 32)
+  for (const size of [16, 32]) {
+    await sharp(Buffer.from(getLogoSVG(size)))
+      .resize(size, size)
+      .png()
+      .toFile(join(iconsDir, `favicon-${size}x${size}.png`));
+    console.log(`✓ favicon-${size}x${size}.png`);
+  }
 
-  // Favicon 16x16
-  const favicon16Svg = generateSVG(16);
-  await sharp(Buffer.from(favicon16Svg)).png().toFile(join(iconsDir, 'favicon-16x16.png'));
+  // Static SVG for use as an SVG favicon or external reference
+  const svgPath = join(__dirname, '..', 'public', 'logo.svg');
+  writeFileSync(svgPath, getLogoSVG(500));
+  console.log('✓ logo.svg');
 
-  console.log('All icons generated successfully!');
+  console.log('\nAll icons generated successfully!');
 }
 
 main().catch(console.error);

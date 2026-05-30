@@ -1,9 +1,15 @@
 import Link from 'next/link';
+import { Logo } from '@/components/Logo';
 
 export function Hero() {
   return (
-    <section className="pt-20 pb-16 px-4 text-center">
+    <section className="pt-16 pb-16 px-4 text-center">
       <div className="max-w-2xl mx-auto">
+        {/* Logo mark */}
+        <div className="flex justify-center mb-6">
+          <Logo size={80} />
+        </div>
+
         {/* Badge */}
         <div className="inline-flex items-center gap-2 bg-primary/10 border border-primary/20
                         text-primary text-xs font-semibold px-3 py-1.5 rounded-full mb-6">

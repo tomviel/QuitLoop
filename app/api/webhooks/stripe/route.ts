@@ -214,12 +214,19 @@ async function sendPaymentFailedEmail(email: string) {
         to: email,
         subject: 'Payment failed — update your billing to keep your streak',
         html: `
-          <div style="font-family:sans-serif;max-width:480px;margin:0 auto">
-            <h2>Payment failed</h2>
-            <p>We couldn't process your QuitLoop subscription payment.</p>
-            <p>Update your billing details to keep your streak going and stay on track.</p>
-            <a href="${process.env.NEXT_PUBLIC_APP_URL}/settings"
-               style="display:inline-block;background:#C0392B;color:white;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:bold">
+          <div style="font-family:sans-serif;max-width:480px;margin:0 auto;background:#0A0A0A;color:#FFFFFF;padding:32px;border-radius:16px">
+            <img src="${process.env.NEXT_PUBLIC_APP_URL ?? 'https://getquitloop.com'}/icons/icon-96x96.png"
+                 width="48" height="48" alt="QuitLoop"
+                 style="border-radius:12px;margin-bottom:20px;display:block"/>
+            <h2 style="font-size:22px;margin:0 0 12px">Payment failed</h2>
+            <p style="color:#888;margin:0 0 8px;line-height:1.6">
+              We couldn't process your QuitLoop subscription payment.
+            </p>
+            <p style="color:#888;margin:0 0 20px;line-height:1.6">
+              Update your billing details to keep your streak going and stay on track.
+            </p>
+            <a href="${process.env.NEXT_PUBLIC_APP_URL ?? 'https://getquitloop.com'}/settings"
+               style="display:inline-block;background:#C0392B;color:white;padding:14px 28px;border-radius:10px;text-decoration:none;font-weight:bold;font-size:15px">
               Update billing
             </a>
           </div>

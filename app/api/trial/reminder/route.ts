@@ -70,9 +70,8 @@ async function sendTrialEndingEmail(email: string) {
       subject: 'Your QuitLoop free trial ends tomorrow',
       html: `
         <div style="font-family:sans-serif;max-width:480px;margin:0 auto;background:#0A0A0A;color:#FFFFFF;padding:32px;border-radius:16px">
-          <div style="width:48px;height:48px;border-radius:50%;background:#C0392B;display:flex;align-items:center;justify-content:center;margin-bottom:20px">
-            <span style="color:white;font-weight:bold;font-size:14px">QL</span>
-          </div>
+          <img src="${appUrl}/icons/icon-96x96.png" width="48" height="48"
+               alt="QuitLoop" style="border-radius:12px;margin-bottom:20px;display:block"/>
           <h2 style="font-size:22px;margin:0 0 12px">Your free trial ends tomorrow</h2>
           <p style="color:#888;margin:0 0 20px;line-height:1.6">
             You've been building something real. Don't let it stop here —

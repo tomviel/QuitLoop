@@ -13,16 +13,18 @@ export const metadata: Metadata = {
   },
   icons: {
     icon: [
+      { url: "/logo.svg",                             type: "image/svg+xml" },
       { url: "/icons/favicon-16x16.png", sizes: "16x16", type: "image/png" },
       { url: "/icons/favicon-32x32.png", sizes: "32x32", type: "image/png" },
-      { url: "/icons/icon-192x192.png", sizes: "192x192", type: "image/png" },
+      { url: "/icons/icon-192x192.png",  sizes: "192x192", type: "image/png" },
     ],
     apple: [{ url: "/icons/apple-touch-icon.png", sizes: "180x180" }],
   },
   openGraph: {
-    title: "QuitLoop — Break Your Addiction",
-    description: "Your cravings last 20 minutes. We'll get you through them.",
+    title: "QuitLoop — Master yourself. Break every loop.",
+    description: "AI-powered craving intervention + mastery score. Break your addiction one craving at a time.",
     type: "website",
+    images: [{ url: "/icons/icon-512x512.png" }],
   },
 };
 
