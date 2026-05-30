@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useOptimistic, useTransition } from 'react';
+import { useState, useTransition } from 'react';
 
 interface Post {
   id: string;
