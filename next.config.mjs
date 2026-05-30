@@ -76,15 +76,15 @@ const securityHeaders = [
       "default-src 'self'",
       // Next.js inline scripts + Stripe
       "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://js.stripe.com",
-      // Supabase, Stripe, Resend APIs + self
+      // Supabase (auth + realtime), Stripe, Resend, OpenAI
       "connect-src 'self' https://*.supabase.co wss://*.supabase.co https://api.stripe.com https://api.resend.com https://api.openai.com",
-      // Stripe iframe for payment UI
-      "frame-src 'self' https://js.stripe.com https://hooks.stripe.com",
-      // Fonts + images (Next.js image optimisation)
-      "font-src 'self' data:",
+      // Stripe iframes + Supabase OAuth popups
+      "frame-src 'self' https://js.stripe.com https://hooks.stripe.com https://*.supabase.co",
+      // Google Fonts files + self + data URIs
+      "font-src 'self' data: https://fonts.gstatic.com",
       "img-src 'self' data: blob: https:",
-      // Inline styles needed by Tailwind + Next.js
-      "style-src 'self' 'unsafe-inline'",
+      // Inline styles (Tailwind + Next.js) + Google Fonts stylesheet
+      "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
       "base-uri 'self'",
       "form-action 'self'",
     ].join('; '),
