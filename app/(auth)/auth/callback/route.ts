@@ -35,17 +35,18 @@ export async function GET(request: NextRequest) {
     }
   );
 
-  const { error } = await supabase.auth.exchangeCodeForSession(code);
+  // exchangeCodeForSession returns the session + user directly.
+  // Do NOT call getUser() afterwards — the session cookies are staged in
+  // pendingCookies but haven't been written back to cookieStore yet, so a
+  // second getUser() would read stale (pre-session) cookies and return null.
+  const { data: exchangeData, error } = await supabase.auth.exchangeCodeForSession(code);
 
   if (error) {
     console.error('[auth/callback] exchange error:', error.message);
     return NextResponse.redirect(`${origin}/login?error=exchange_failed`);
   }
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
+  const user = exchangeData?.user;
   if (!user) {
     return NextResponse.redirect(`${origin}/login?error=no_user`);
   }
