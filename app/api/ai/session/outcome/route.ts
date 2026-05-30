@@ -12,10 +12,12 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
-  const { sessionId, resisted } = (await req.json()) as {
-    sessionId: string;
-    resisted: boolean;
-  };
+  let sessionId: string, resisted: boolean;
+  try {
+    ({ sessionId, resisted } = (await req.json()) as { sessionId: string; resisted: boolean });
+  } catch {
+    return NextResponse.json({ error: 'Invalid request body' }, { status: 400 });
+  }
 
   if (!sessionId || resisted === undefined) {
     return NextResponse.json({ error: 'Missing fields' }, { status: 400 });
@@ -54,6 +56,19 @@ export async function POST(req: Request) {
     .eq('user_id', user.id)
     .eq('addiction_type', session.addiction_type)
     .single();
+
+  // Award mastery points: +10 for resisting, +5 per streak day milestone
+  if (resisted) {
+    const streakBonus = (streak?.current_streak ?? 0) > 0 ? 5 : 0;
+    const points = 10 + streakBonus;
+    const { error: masteryError } = await supabase.rpc('upsert_mastery_points', {
+      p_user_id: user.id,
+      p_points: points,
+    });
+    if (masteryError) {
+      console.error('[outcome] mastery points error:', masteryError);
+    }
+  }
 
   return NextResponse.json({
     success: true,

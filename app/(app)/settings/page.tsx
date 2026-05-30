@@ -61,7 +61,7 @@ export default async function SettingsPage() {
         {/* Modules */}
         <ModuleSettings
           activeModules={activeModules}
-          plan={subscription?.plan ?? 'starter'}
+          plan={subscription?.plan ?? 'solo'}
         />
 
         {/* SMS schedule */}

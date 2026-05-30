@@ -1,4 +1,5 @@
 import Stripe from 'stripe';
+import type { PlanId, BillingCycle } from '@/types';
 
 let _stripe: Stripe | null = null;
 
@@ -12,21 +13,20 @@ export function getStripe(): Stripe {
   return _stripe;
 }
 
-export type PlanId = 'starter' | 'pro' | 'unlimited';
-export type BillingCycle = 'monthly' | 'yearly';
+export { type PlanId, type BillingCycle };
 
 export const PLAN_PRICES: Record<PlanId, Record<BillingCycle, string>> = {
-  starter: {
-    monthly: process.env.STRIPE_PRICE_STARTER_MONTHLY!,
-    yearly: process.env.STRIPE_PRICE_STARTER_YEARLY!,
+  solo: {
+    monthly: process.env.STRIPE_PRICE_SOLO_MONTHLY!,
+    yearly: process.env.STRIPE_PRICE_SOLO_YEARLY!,
   },
-  pro: {
-    monthly: process.env.STRIPE_PRICE_PRO_MONTHLY!,
-    yearly: process.env.STRIPE_PRICE_PRO_YEARLY!,
+  community: {
+    monthly: process.env.STRIPE_PRICE_COMMUNITY_MONTHLY!,
+    yearly: process.env.STRIPE_PRICE_COMMUNITY_YEARLY!,
   },
-  unlimited: {
-    monthly: process.env.STRIPE_PRICE_UNLIMITED_MONTHLY!,
-    yearly: process.env.STRIPE_PRICE_UNLIMITED_YEARLY!,
+  elite: {
+    monthly: process.env.STRIPE_PRICE_ELITE_MONTHLY!,
+    yearly: process.env.STRIPE_PRICE_ELITE_YEARLY!,
   },
 };
 
@@ -34,30 +34,39 @@ export const PLAN_DISPLAY: Record<
   PlanId,
   { name: string; monthly: number; yearly: number; features: string[] }
 > = {
-  starter: {
-    name: 'Starter',
+  solo: {
+    name: 'Solo',
     monthly: 9,
     yearly: 79,
-    features: ['1 addiction module', 'Craving intervention', 'Streak tracker'],
-  },
-  pro: {
-    name: 'Pro',
-    monthly: 14,
-    yearly: 119,
     features: [
-      '2 addiction modules',
-      'Craving intervention',
-      'Proactive SMS alerts',
-      'Weekly stats',
+      '1 addiction module',
+      'AI craving intervention',
+      'Streak tracker',
+      'Mastery score',
     ],
   },
-  unlimited: {
-    name: 'Unlimited',
+  community: {
+    name: 'Community',
     monthly: 19,
     yearly: 159,
     features: [
-      'Everything in Pro',
-      'Community access',
+      '2 addiction modules',
+      'AI craving intervention',
+      'Proactive SMS alerts',
+      'Community win feed',
+      'Weekly leaderboard',
+      'Mastery score',
+    ],
+  },
+  elite: {
+    name: 'Elite',
+    monthly: 49,
+    yearly: 490,
+    features: [
+      'Everything in Community',
+      'Infinite progression challenges',
+      'Accountability partner',
+      'Elder status (90-day streaks)',
       'Priority support',
     ],
   },

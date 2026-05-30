@@ -4,6 +4,8 @@ import { LandingNav } from '@/components/landing/LandingNav';
 import { Hero } from '@/components/landing/Hero';
 import { PainSection } from '@/components/landing/PainSection';
 import { HowItWorks } from '@/components/landing/HowItWorks';
+import { MasterySection } from '@/components/landing/MasterySection';
+import { CommunitySection } from '@/components/landing/CommunitySection';
 import { PricingSection } from '@/components/landing/PricingSection';
 import { Testimonials } from '@/components/landing/Testimonials';
 import { Footer } from '@/components/landing/Footer';
@@ -31,6 +33,8 @@ export default async function RootPage() {
         <Hero />
         <PainSection />
         <HowItWorks />
+        <MasterySection />
+        <CommunitySection />
         <PricingSection />
         <Testimonials />
       </main>

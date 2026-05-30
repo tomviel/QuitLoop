@@ -89,7 +89,7 @@ export function PlanSettings({
             </Link>
           )}
 
-          {plan !== 'unlimited' && status === 'active' && (
+          {plan !== 'elite' && status === 'active' && (
             <Link
               href="/pricing"
               className="w-full flex items-center justify-center min-h-[44px] rounded-xl

@@ -67,7 +67,7 @@ function PricingContent() {
         </div>
 
         <div className="space-y-4">
-          {(['starter', 'pro', 'unlimited'] as PlanId[]).map((plan) => {
+          {(['solo', 'community', 'elite'] as PlanId[]).map((plan) => {
             const display = PLAN_DISPLAY[plan];
             const price =
               billingCycle === 'monthly'
@@ -77,13 +77,13 @@ function PricingContent() {
             return (
               <div
                 key={plan}
-                className={`card ${plan === 'pro' ? 'border-primary/40' : ''}`}
+                className={`card ${plan === 'community' ? 'border-primary/40' : ''}`}
               >
                 <div className="flex items-center justify-between mb-3">
                   <div>
                     <div className="flex items-center gap-2">
                       <span className="font-bold text-text-primary">{display.name}</span>
-                      {plan === 'pro' && (
+                      {plan === 'community' && (
                         <span className="text-xs bg-primary/20 text-primary px-2 py-0.5 rounded-full font-medium">
                           Recommended
                         </span>
@@ -106,7 +106,7 @@ function PricingContent() {
                 <Button
                   onClick={() => handleSubscribe(plan)}
                   loading={loadingPlan === plan}
-                  variant={plan === 'pro' ? 'primary' : 'outline'}
+                  variant={plan === 'community' ? 'primary' : 'outline'}
                   className="w-full"
                 >
                   Subscribe to {display.name}

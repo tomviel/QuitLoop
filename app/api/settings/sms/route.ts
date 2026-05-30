@@ -6,11 +6,16 @@ export async function PATCH(req: Request) {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
-  const { cravingStart, cravingEnd, active } = (await req.json()) as {
-    cravingStart?: string;
-    cravingEnd?: string;
-    active?: boolean;
-  };
+  let cravingStart: string | undefined, cravingEnd: string | undefined, active: boolean | undefined;
+  try {
+    ({ cravingStart, cravingEnd, active } = (await req.json()) as {
+      cravingStart?: string;
+      cravingEnd?: string;
+      active?: boolean;
+    });
+  } catch {
+    return NextResponse.json({ error: 'Invalid request body' }, { status: 400 });
+  }
 
   type SmsUpdate = { craving_start?: string; craving_end?: string; active?: boolean };
   const updates: SmsUpdate = {};

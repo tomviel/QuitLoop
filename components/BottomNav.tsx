@@ -13,8 +13,8 @@ interface NavItem {
 
 const NAV_ITEMS: NavItem[] = [
   { href: '/dashboard', label: 'Home', icon: '🏠' },
-  { href: '/stats', label: 'Stats', icon: '📊' },
   { href: '/community', label: 'Community', icon: '👥', locked: true },
+  { href: '/leaderboard', label: 'Ranks', icon: '🏆', locked: true },
   { href: '/settings', label: 'Settings', icon: '⚙️' },
 ];
 
@@ -30,7 +30,7 @@ export function BottomNav({ plan }: BottomNavProps) {
       <div className="flex items-stretch max-w-lg mx-auto">
         {NAV_ITEMS.map((item) => {
           const isActive = pathname === item.href;
-          const isLocked = item.locked && plan === 'starter';
+          const isLocked = item.locked && (plan === 'solo' || !plan);
 
           return (
             <Link

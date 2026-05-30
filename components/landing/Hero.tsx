@@ -12,14 +12,13 @@ export function Hero() {
         </div>
 
         <h1 className="text-4xl sm:text-5xl font-bold text-text-primary leading-tight mb-5">
-          Your cravings last{' '}
-          <span className="text-primary">20 minutes.</span>
-          <br />
-          We&apos;ll get you through them.
+          Master yourself.{' '}
+          <span className="text-primary">Break every loop.</span>
         </h1>
 
         <p className="text-text-secondary text-lg sm:text-xl leading-relaxed mb-8 max-w-xl mx-auto">
-          AI-powered intervention the moment a craving hits. For vaping and junk food addiction.
+          AI-powered craving intervention + a mastery score that proves you&apos;re getting stronger
+          — every single day.
         </p>
 
         <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
@@ -34,22 +33,22 @@ export function Hero() {
           </p>
         </div>
 
-        {/* Mini social proof */}
-        <div className="flex items-center justify-center gap-3 mt-8">
-          <div className="flex -space-x-2">
-            {['SB', 'TK', 'LD'].map((initials) => (
-              <div
-                key={initials}
-                className="w-8 h-8 rounded-full bg-bg-surface border-2 border-bg
-                           flex items-center justify-center text-xs font-semibold text-text-secondary"
-              >
-                {initials}
-              </div>
-            ))}
+        {/* Stats bar */}
+        <div className="flex items-center justify-center gap-8 mt-10 flex-wrap">
+          <div className="text-center">
+            <p className="text-2xl font-bold text-text-primary">1,200+</p>
+            <p className="text-xs text-text-muted">people this month</p>
           </div>
-          <p className="text-text-secondary text-sm">
-            Joined by <span className="text-text-primary font-semibold">1,200+</span> people this month
-          </p>
+          <div className="w-px h-8 bg-border hidden sm:block" />
+          <div className="text-center">
+            <p className="text-2xl font-bold text-text-primary">83%</p>
+            <p className="text-xs text-text-muted">resist rate week 2</p>
+          </div>
+          <div className="w-px h-8 bg-border hidden sm:block" />
+          <div className="text-center">
+            <p className="text-2xl font-bold text-text-primary">21 days</p>
+            <p className="text-xs text-text-muted">avg streak at 60 days</p>
+          </div>
         </div>
       </div>
     </section>

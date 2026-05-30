@@ -4,6 +4,7 @@ import { createClient } from '@/lib/supabase/server';
 import { TopBar } from '@/components/dashboard/TopBar';
 import { CravingButton } from '@/components/dashboard/CravingButton';
 import { DashboardModuleCard } from '@/components/dashboard/DashboardModuleCard';
+import { MasteryCard } from '@/components/dashboard/MasteryCard';
 import { WeeklyGraph } from '@/components/dashboard/WeeklyGraph';
 import { OnboardedBanner } from '@/components/dashboard/OnboardedBanner';
 import { TrialBanner } from '@/components/dashboard/TrialBanner';
@@ -25,7 +26,7 @@ export default async function DashboardPage() {
   lastWeekStart.setDate(lastWeekStart.getDate() - 7);
 
   // Fetch all dashboard data in parallel
-  const [modulesResult, streaksResult, subscriptionResult, thisWeekResult, lastWeekResult] =
+  const [modulesResult, streaksResult, subscriptionResult, thisWeekResult, lastWeekResult, masteryResult] =
     await Promise.all([
       supabase.from('modules').select('*').eq('user_id', user.id).eq('active', true),
       supabase.from('streaks').select('*').eq('user_id', user.id),
@@ -45,6 +46,11 @@ export default async function DashboardPage() {
         .eq('user_id', user.id)
         .gte('created_at', lastWeekStart.toISOString())
         .lt('created_at', weekStart.toISOString()),
+      supabase
+        .from('mastery_scores')
+        .select('total_score, weekly_score')
+        .eq('user_id', user.id)
+        .maybeSingle(),
     ]);
 
   const modules = (modulesResult.data ?? []) as Module[];
@@ -52,6 +58,7 @@ export default async function DashboardPage() {
   const subscription = subscriptionResult.data;
   const thisWeekSessions = thisWeekResult.data ?? [];
   const lastWeekSessions = lastWeekResult.data ?? [];
+  const mastery = masteryResult.data;
 
   // Total current streak = sum across all active modules
   const totalCurrentStreak = streaks.reduce((sum, s) => sum + s.current_streak, 0);
@@ -139,6 +146,14 @@ export default async function DashboardPage() {
           </div>
         </section>
       )}
+
+      {/* Mastery score */}
+      <section className="px-4 mb-4">
+        <MasteryCard
+          totalScore={mastery?.total_score ?? 0}
+          weeklyScore={mastery?.weekly_score ?? 0}
+        />
+      </section>
 
       {/* Weekly graph */}
       <section className="px-4">

@@ -12,34 +12,8 @@ interface EndScreenProps {
 
 export function EndScreen({ resisted: hasChosen, newStreak, onChoose, loading }: EndScreenProps) {
   const router = useRouter();
-  const confettiRef = useRef(false);
 
-  // Fire confetti after "yes" is confirmed
-  useEffect(() => {
-    if (!hasChosen || confettiRef.current || newStreak === 0) return;
-    confettiRef.current = true;
-
-    import('canvas-confetti').then(({ default: confetti }) => {
-      // Left side shooter
-      confetti({
-        particleCount: 60,
-        angle: 60,
-        spread: 55,
-        origin: { x: 0, y: 0.65 },
-        colors: ['#C0392B', '#E74C3C', '#FFFFFF', '#27AE60'],
-      });
-      // Right side shooter
-      confetti({
-        particleCount: 60,
-        angle: 120,
-        spread: 55,
-        origin: { x: 1, y: 0.65 },
-        colors: ['#C0392B', '#E74C3C', '#FFFFFF', '#27AE60'],
-      });
-    });
-  }, [hasChosen, newStreak]);
-
-  // After showing result, auto-navigate to dashboard after 4 seconds
+  // After showing result, auto-navigate to dashboard after 5 seconds
   useEffect(() => {
     if (!hasChosen && newStreak === -1) return; // no choice made yet
     if (loading) return;
@@ -95,6 +69,31 @@ export function OutcomeDisplay({
   resisted: boolean;
   newStreak: number;
 }) {
+  const confettiRef = useRef(false);
+
+  // Fire confetti when user resisted and has a streak
+  useEffect(() => {
+    if (!resisted || confettiRef.current || newStreak === 0) return;
+    confettiRef.current = true;
+
+    import('canvas-confetti').then(({ default: confetti }) => {
+      confetti({
+        particleCount: 60,
+        angle: 60,
+        spread: 55,
+        origin: { x: 0, y: 0.65 },
+        colors: ['#C0392B', '#E74C3C', '#FFFFFF', '#27AE60'],
+      });
+      confetti({
+        particleCount: 60,
+        angle: 120,
+        spread: 55,
+        origin: { x: 1, y: 0.65 },
+        colors: ['#C0392B', '#E74C3C', '#FFFFFF', '#27AE60'],
+      });
+    });
+  }, [resisted, newStreak]);
+
   if (resisted) {
     return (
       <div className="animate-fade-in text-center py-8">

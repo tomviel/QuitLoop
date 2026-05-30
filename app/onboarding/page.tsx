@@ -26,7 +26,7 @@ interface OnboardingState {
 }
 
 const DEFAULT_STATE: OnboardingState = {
-  plan: 'pro',
+  plan: 'community',
   billingCycle: 'monthly',
   modules: ['vaping', 'junkfood'],
   triggers: [],
@@ -60,11 +60,11 @@ export default function OnboardingPage() {
   function toggleModule(type: AddictionType) {
     setState((prev) => {
       const has = prev.modules.includes(type);
-      if (prev.plan === 'starter') {
-        // Starter: single module, toggle replaces
+      if (prev.plan === 'solo') {
+        // Solo: single module, toggle replaces
         return { ...prev, modules: [type] };
       }
-      // Pro/Unlimited: can deselect but must keep at least one
+      // Community/Elite: can deselect but must keep at least one
       if (has && prev.modules.length === 1) return prev;
       return {
         ...prev,
@@ -77,9 +77,9 @@ export default function OnboardingPage() {
     setState((prev) => ({
       ...prev,
       plan,
-      // Starter gets 1 module max; Pro/Unlimited default both
+      // Solo gets 1 module max; Community/Elite default both
       modules:
-        plan === 'starter'
+        plan === 'solo'
           ? [prev.modules[0] ?? 'vaping']
           : ['vaping', 'junkfood'],
     }));
@@ -262,13 +262,13 @@ function Step1Plan({
       </div>
 
       <div className="space-y-3">
-        {(['starter', 'pro', 'unlimited'] as PlanId[]).map((p) => (
+        {(['solo', 'community', 'elite'] as PlanId[]).map((p) => (
           <PlanCard
             key={p}
             plan={p}
             billingCycle={billingCycle}
             selected={plan === p}
-            recommended={p === 'pro'}
+            recommended={p === 'community'}
             onSelect={() => onPlanChange(p)}
           />
         ))}
@@ -294,7 +294,7 @@ function Step2Modules({
         What are you quitting?
       </h2>
       <p className="text-text-secondary text-sm mb-5">
-        {plan === 'starter'
+        {plan === 'solo'
           ? 'Choose one addiction module.'
           : 'Both modules included. Deselect if you only need one.'}
       </p>

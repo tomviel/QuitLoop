@@ -14,12 +14,17 @@ export async function POST(req: Request) {
     return new NextResponse('Unauthorized', { status: 401 });
   }
 
-  const { addictionType, location, trigger, nearby } = (await req.json()) as {
-    addictionType: AddictionType;
-    location: string;
-    trigger: string;
-    nearby: string;
-  };
+  let addictionType: AddictionType, location: string, trigger: string, nearby: string;
+  try {
+    ({ addictionType, location, trigger, nearby } = (await req.json()) as {
+      addictionType: AddictionType;
+      location: string;
+      trigger: string;
+      nearby: string;
+    });
+  } catch {
+    return new NextResponse('Invalid request body', { status: 400 });
+  }
 
   if (!addictionType || !location || !trigger || !nearby) {
     return new NextResponse('Missing fields', { status: 400 });

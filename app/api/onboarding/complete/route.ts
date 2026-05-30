@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { createClient, createAdminClient } from '@/lib/supabase/server';
+import { sanitizePhone, isValidTimezone, isValidTime } from '@/lib/sanitize';
 import type { PlanId, BillingCycle, AddictionType } from '@/types';
 
 interface OnboardingPayload {
@@ -39,15 +40,21 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
   }
 
+  // Sanitize inputs
+  const cleanPhone = phone ? sanitizePhone(phone) : '';
+  const cleanTimezone = isValidTimezone(timezone) ? timezone : 'UTC';
+  const cleanCravingStart = isValidTime(cravingStart) ? cravingStart : '20:00';
+  const cleanCravingEnd = isValidTime(cravingEnd) ? cravingEnd : '22:00';
+
   // 1. Upsert user profile — insert if the row doesn't exist yet (e.g. the
   //    handle_new_user trigger hadn't fired), otherwise update in place.
   //    This guarantees the FK constraint on modules.user_id is satisfied.
   const profileUpsert: { id: string; email: string; timezone: string; phone?: string } = {
     id: user.id,
     email: user.email!,
-    timezone,
+    timezone: cleanTimezone,
   };
-  if (phone?.trim()) profileUpsert.phone = phone.trim();
+  if (cleanPhone) profileUpsert.phone = cleanPhone;
 
   const { error: userError } = await supabase
     .from('users')
@@ -95,9 +102,9 @@ export async function POST(req: Request) {
     const { error: smsError } = await supabase.from('sms_schedules').upsert(
       {
         user_id: user.id,
-        craving_start: cravingStart,
-        craving_end: cravingEnd,
-        timezone,
+        craving_start: cleanCravingStart,
+        craving_end: cleanCravingEnd,
+        timezone: cleanTimezone,
         active: true,
       },
       { onConflict: 'user_id' }

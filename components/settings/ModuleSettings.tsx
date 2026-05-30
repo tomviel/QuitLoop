@@ -17,14 +17,14 @@ export function ModuleSettings({ activeModules: initial, plan }: ModuleSettingsP
   const [loading, setLoading] = useState<AddictionType | null>(null);
   const [error, setError] = useState('');
 
-  const canAddMore = plan !== 'starter' || activeModules.length < 1;
+  const canAddMore = plan !== 'solo' || activeModules.length < 1;
 
   async function toggle(type: AddictionType) {
     const willBeActive = !activeModules.includes(type);
 
-    // Starter plan: can only have 1 module
-    if (willBeActive && plan === 'starter' && activeModules.length >= 1) {
-      setError('Upgrade to Pro to add a second module.');
+    // Solo plan: can only have 1 module
+    if (willBeActive && plan === 'solo' && activeModules.length >= 1) {
+      setError('Upgrade to Community to add a second module.');
       return;
     }
     // Must keep at least one module

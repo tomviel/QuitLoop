@@ -6,9 +6,9 @@ import type { BillingCycle, PlanId } from '@/types';
 import { PLAN_DISPLAY } from '@/lib/stripe';
 
 const PLANS: { id: PlanId; recommended?: boolean }[] = [
-  { id: 'starter' },
-  { id: 'pro', recommended: true },
-  { id: 'unlimited' },
+  { id: 'solo' },
+  { id: 'community', recommended: true },
+  { id: 'elite' },
 ];
 
 export function PricingSection() {

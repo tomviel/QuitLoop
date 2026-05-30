@@ -73,17 +73,19 @@ async function handleCheckoutCompleted(
 
   if (!customerId || !subscriptionId) return;
 
-  // Look up the Supabase user ID from Stripe customer metadata
-  const userId = session.metadata?.supabase_user_id;
+  // Look up the Supabase user ID from Stripe checkout metadata first,
+  // then fall back to matching stripe_customer_id in our subscriptions table.
+  let userId: string | undefined = session.metadata?.supabase_user_id;
   if (!userId) {
-    // Fall back: find user by stripe_customer_id
     const { data: sub } = await supabase
       .from('subscriptions')
       .select('user_id')
       .eq('stripe_customer_id', customerId)
       .single();
     if (!sub) return;
+    userId = sub.user_id;
   }
+  if (!userId) return;
 
   // Retrieve subscription details from Stripe
   const stripeSub = await getStripe().subscriptions.retrieve(subscriptionId);
@@ -92,9 +94,6 @@ async function handleCheckoutCompleted(
   const billingCycle = stripeSub.items.data[0]?.price.recurring?.interval === 'year'
     ? 'yearly'
     : 'monthly';
-
-  const targetUserId = userId ?? (await getUserIdByCustomer(customerId, supabase));
-  if (!targetUserId) return;
 
   await supabase
     .from('subscriptions')
@@ -106,7 +105,7 @@ async function handleCheckoutCompleted(
       status: 'active',
       trial_ends_at: null,
     })
-    .eq('user_id', targetUserId);
+    .eq('user_id', userId);
 }
 
 async function handleSubscriptionUpdated(
@@ -191,14 +190,14 @@ async function getUserIdByCustomer(
 
 function priceIdToPlan(priceId: string | undefined): string {
   const prices: Record<string, string> = {
-    [process.env.STRIPE_PRICE_STARTER_MONTHLY ?? '']: 'starter',
-    [process.env.STRIPE_PRICE_STARTER_YEARLY ?? '']: 'starter',
-    [process.env.STRIPE_PRICE_PRO_MONTHLY ?? '']: 'pro',
-    [process.env.STRIPE_PRICE_PRO_YEARLY ?? '']: 'pro',
-    [process.env.STRIPE_PRICE_UNLIMITED_MONTHLY ?? '']: 'unlimited',
-    [process.env.STRIPE_PRICE_UNLIMITED_YEARLY ?? '']: 'unlimited',
+    [process.env.STRIPE_PRICE_SOLO_MONTHLY ?? '']: 'solo',
+    [process.env.STRIPE_PRICE_SOLO_YEARLY ?? '']: 'solo',
+    [process.env.STRIPE_PRICE_COMMUNITY_MONTHLY ?? '']: 'community',
+    [process.env.STRIPE_PRICE_COMMUNITY_YEARLY ?? '']: 'community',
+    [process.env.STRIPE_PRICE_ELITE_MONTHLY ?? '']: 'elite',
+    [process.env.STRIPE_PRICE_ELITE_YEARLY ?? '']: 'elite',
   };
-  return prices[priceId ?? ''] ?? 'pro';
+  return prices[priceId ?? ''] ?? 'community';
 }
 
 async function sendPaymentFailedEmail(email: string) {

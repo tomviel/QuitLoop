@@ -28,13 +28,21 @@ export default async function AppLayout({
     redirect('/onboarding');
   }
 
-  // Trial expired and no active subscription
+  // Block access for canceled or past-due subscriptions
+  if (subscription.status === 'canceled') {
+    redirect('/pricing?reason=canceled');
+  }
+  if (subscription.status === 'past_due') {
+    redirect('/pricing?reason=past_due');
+  }
+
+  // Block access when trial has expired
   const trialExpired =
     subscription.status === 'trialing' &&
-    subscription.trial_ends_at &&
+    subscription.trial_ends_at != null &&
     new Date(subscription.trial_ends_at) < new Date();
 
-  if (trialExpired && subscription.status !== 'active') {
+  if (trialExpired) {
     redirect('/pricing?reason=trial_expired');
   }
 

@@ -1,4 +1,4 @@
-export type PlanId = 'starter' | 'pro' | 'unlimited';
+export type PlanId = 'solo' | 'community' | 'elite';
 export type BillingCycle = 'monthly' | 'yearly';
 export type AddictionType = 'vaping' | 'junkfood';
 export type SubscriptionStatus = 'trialing' | 'active' | 'canceled' | 'past_due';

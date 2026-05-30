@@ -6,7 +6,12 @@ export async function PATCH(req: Request) {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
-  const { phone } = (await req.json()) as { phone: string };
+  let phone: string;
+  try {
+    ({ phone } = (await req.json()) as { phone: string });
+  } catch {
+    return NextResponse.json({ error: 'Invalid request body' }, { status: 400 });
+  }
 
   if (!phone?.trim()) {
     return NextResponse.json({ error: 'Phone number required' }, { status: 400 });

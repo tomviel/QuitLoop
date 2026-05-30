@@ -15,6 +15,7 @@ export type Database = {
           email: string;
           phone: string | null;
           timezone: string;
+          language: string;
           created_at: string;
         };
         Insert: {
@@ -22,6 +23,7 @@ export type Database = {
           email: string;
           phone?: string | null;
           timezone?: string;
+          language?: string;
           created_at?: string;
         };
         Update: {
@@ -29,6 +31,7 @@ export type Database = {
           email?: string;
           phone?: string | null;
           timezone?: string;
+          language?: string;
         };
         Relationships: [];
       };
@@ -221,6 +224,136 @@ export type Database = {
           }
         ];
       };
+      mastery_scores: {
+        Row: {
+          id: string;
+          user_id: string;
+          total_score: number;
+          weekly_score: number;
+          week_start: string;
+          last_updated: string;
+        };
+        Insert: {
+          id?: string;
+          user_id: string;
+          total_score?: number;
+          weekly_score?: number;
+          week_start?: string;
+          last_updated?: string;
+        };
+        Update: {
+          total_score?: number;
+          weekly_score?: number;
+          week_start?: string;
+          last_updated?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'mastery_scores_user_id_fkey';
+            columns: ['user_id'];
+            referencedRelation: 'users';
+            referencedColumns: ['id'];
+          }
+        ];
+      };
+      challenges: {
+        Row: {
+          id: string;
+          user_id: string;
+          challenge_type: string;
+          level: number;
+          start_date: string;
+          completed: boolean;
+          completed_at: string | null;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          user_id: string;
+          challenge_type: string;
+          level?: number;
+          start_date?: string;
+          completed?: boolean;
+          completed_at?: string | null;
+          created_at?: string;
+        };
+        Update: {
+          level?: number;
+          completed?: boolean;
+          completed_at?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'challenges_user_id_fkey';
+            columns: ['user_id'];
+            referencedRelation: 'users';
+            referencedColumns: ['id'];
+          }
+        ];
+      };
+      community_posts: {
+        Row: {
+          id: string;
+          user_id: string;
+          content: string;
+          streak_count: number;
+          likes: number;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          user_id: string;
+          content: string;
+          streak_count?: number;
+          likes?: number;
+          created_at?: string;
+        };
+        Update: {
+          content?: string;
+          likes?: number;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'community_posts_user_id_fkey';
+            columns: ['user_id'];
+            referencedRelation: 'users';
+            referencedColumns: ['id'];
+          }
+        ];
+      };
+      accountability_pairs: {
+        Row: {
+          id: string;
+          user1_id: string;
+          user2_id: string;
+          active: boolean;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          user1_id: string;
+          user2_id: string;
+          active?: boolean;
+          created_at?: string;
+        };
+        Update: {
+          active?: boolean;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'accountability_pairs_user1_id_fkey';
+            columns: ['user1_id'];
+            referencedRelation: 'users';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'accountability_pairs_user2_id_fkey';
+            columns: ['user2_id'];
+            referencedRelation: 'users';
+            referencedColumns: ['id'];
+          }
+        ];
+      };
       sms_schedules: {
         Row: {
           id: string;
@@ -266,6 +399,13 @@ export type Database = {
           p_type: string;
           p_resisted: boolean;
           p_session_date?: string;
+        };
+        Returns: undefined;
+      };
+      upsert_mastery_points: {
+        Args: {
+          p_user_id: string;
+          p_points: number;
         };
         Returns: undefined;
       };

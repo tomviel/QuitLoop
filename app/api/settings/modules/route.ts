@@ -7,10 +7,12 @@ export async function PATCH(req: Request) {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
-  const { addictionType, active } = (await req.json()) as {
-    addictionType: AddictionType;
-    active: boolean;
-  };
+  let addictionType: AddictionType, active: boolean;
+  try {
+    ({ addictionType, active } = (await req.json()) as { addictionType: AddictionType; active: boolean });
+  } catch {
+    return NextResponse.json({ error: 'Invalid request body' }, { status: 400 });
+  }
 
   // Upsert the module record
   const { error } = await supabase
